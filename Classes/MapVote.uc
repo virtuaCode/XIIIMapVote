@@ -169,6 +169,8 @@ function PlayerJoin(PlayerController Player) {
         $ Player.PlayerReplicationInfo.PlayerName $ ", "
         $ Player.GetPlayerNetworkAddress(), 'MapVote');
     AddMapVoteReplicationInfo(Player);
+
+    BroadcastInfo(0);
 }
 //------------------------------------------------------------------------------------------------
 function AddMapVoteReplicationInfo(PlayerController Player) {
@@ -459,7 +461,7 @@ function SubmitMapVote(int MapIndex, Actor Voter) {
     //   else
     //BroadcastMessage(PlayerController(Voter).PlayerReplicationInfo.PlayerName $ " voted for " $ mid(MapName,1), true);
 
-    BroadcastMessage(class 'VoteMsg', MapIndex, PlayerController(Voter).PlayerReplicationInfo, none);
+    BroadcastMessage(class 'MapVoteMsg', MapIndex, PlayerController(Voter).PlayerReplicationInfo, none);
 
     TallyVotes(false);
 }
@@ -513,7 +515,7 @@ function TallyVotes(bool bForceMapSwitch) {
 
     if (!Level.Game.bGameEnded && !bMidGameVote && (float(PlayersThatVoted) / float(Level.Game.NumPlayers)) * 100 >= MidGameVotePercent) // Mid game vote initiated
     {
-        BroadcastText("Mid-Game Map Voting has been initiated !!!!");
+        BroadcastInfo(1);
         bMidGameVote = true;
         // Start voting count-down timer
         TimeLeft = VoteTimeLimit;
@@ -643,7 +645,7 @@ function TallyVotes(bool bForceMapSwitch) {
         log("!!SERVER RESTART!! Address: "
             $ ServerAddress[LastAddressIndex], 'MapVote');
         
-        BroadcastText("Vote ended! Upcoming map: " $ MapList[topmap].Title);
+        BroadcastMapResult(topmap);
         
 
 
@@ -721,7 +723,7 @@ event timer() {
                 log("!!SERVER RESTART!! Address: "
                     $ ServerAddress[LastAddressIndex], 'MapVote');
 
-                BroadcastText("Vote ended! Upcoming map: " $ MapList[mapnum].Title);
+                BroadcastMapResult(mapnum);
 
 
                 settimer2(5, false); // Five seconds should be enough for the second server to be started
@@ -743,7 +745,7 @@ event timer() {
             if (bHandleEndGame) {
                 AllGoToGameEnded();
                 OpenAllVoteWindows();
-                BroadcastEndGameCountDown(TimeLeft);
+                BroadcastCountDown(TimeLeft);
             } else
                 BroadcastCountDown(TimeLeft);
         }
@@ -755,18 +757,13 @@ event timer() {
     {
         log("___CountDown "
             $ TimeLeft, 'MapVote');
-        if (bHandleEndGame)
-            BroadcastEndGameCountDown(TimeLeft);
-        else
-            BroadcastCountDown(TimeLeft);
+        BroadcastCountDown(TimeLeft);
     }
 
     if (TimeLeft < 11 && TimeLeft > 0) // play announcer voice Count Down
     {
-        if (bHandleEndGame)
-            BroadcastEndGameCountDown(TimeLeft);
-        else
-            BroadcastCountDown(TimeLeft);
+
+        BroadcastCountDown(TimeLeft);
     }
 
     if (TimeLeft % 20 == 0 && TimeLeft > 0) {
@@ -899,25 +896,15 @@ function BroadcastText(string strMsg) {
 }
 //------------------------------------------------------------------------------------------------
 function BroadcastCountDown(int Switch) {
-    local Controller C;
-    local PlayerController P;
-
-    For(C = Level.ControllerList; C != None; C = C.NextController) {
-        P = PlayerController(C);
-        if (P != None)
-            P.ReceiveLocalizedMessage(class 'MapVoteCountDownMsg', Switch);
-    }
+    BroadcastMessage(class 'MapVoteCountDownMsg', Switch);
 }
 //------------------------------------------------------------------------------------------------
-function BroadcastEndGameCountDown(int Switch) {
-    local Controller C;
-    local PlayerController P;
-
-    For(C = Level.ControllerList; C != None; C = C.NextController) {
-        P = PlayerController(C);
-        if (P != None)
-            P.ReceiveLocalizedMessage(class 'MapVoteCountDownMsg', Switch);
-    }
+function BroadcastInfo(int Switch) {
+    BroadcastMessage(class 'MapVoteInfoMsg', Switch);
+}
+//------------------------------------------------------------------------------------------------
+function BroadcastMapResult(int Switch) {
+    BroadcastMessage(class 'MapVoteResultMsg', Switch);
 }
 
 //------------------------------------------------------------------------------------------------

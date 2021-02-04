@@ -29,7 +29,7 @@ function bool KeyEvent( out EInputKey Key, out EInputAction Action, FLOAT Delta 
 }
 //------------------------------------------------------------------------------------------------
 function OpenVoteWindow() {
-    local XIIIRootWindow myRoot; // XIIIRootWindow
+    local XIIIRootWindowPlus myRoot; // XIIIRootWindow
     local PlayerController PlayerOwner;
 
     if(ViewportOwner != none)
@@ -45,9 +45,9 @@ function OpenVoteWindow() {
 
 
          myRoot = XIIIRootWindowPlus(ViewportOwner.LocalInteractions[0]);
-
-         myRoot.CloseAll(true);
-         myRoot.bIamInMulti = false;
+         myRoot.gotostate('');
+         //myRoot.CloseAll(true);
+         myRoot.bIamInMulti = true;
          myRoot.gotostate('UWindows');
          myRoot.OpenMenuWithClass(class'XIIIMapVote.XIIIMenuMapVote', True);
          MVWindow = XIIIMenuMapVote(GUIController(ViewportOwner.LocalInteractions[0]).TopPage());

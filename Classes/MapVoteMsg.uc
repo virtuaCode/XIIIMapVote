@@ -1,4 +1,4 @@
-class VoteMsg extends LocalMessage;
+class MapVoteMsg extends LocalMessage;
 
 static function string GetString(
 	optional int Switch,

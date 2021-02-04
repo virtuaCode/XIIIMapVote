@@ -117,7 +117,7 @@ simulated event PostNetBeginPlay ()
          MVInteraction = MapVoteInteraction(PlayerOwner.Player.InteractionMaster.AddInteraction("XIIIMapVote.MapVoteInteraction",PlayerOwner.Player));
       }
       MVInteraction.MVRI = self;
-      PlayerController(MyOwner).ClientMessage("Info: Press F5 to open the MapVote menu.");
+      
    }
    else
       log("___PlayerOwner.Player == none",'MapVote');

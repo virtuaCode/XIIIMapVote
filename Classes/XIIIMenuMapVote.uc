@@ -25,7 +25,7 @@ function Created()
 //  LOCAL class<GameInfo> GameClass;
     LOCAL bool bCanKick, bShowQuitButton;
 
-    Super.Created();
+    Super(XIIIWindowPlus).Created();
 
     // init values
     BoxWidth = 200;
@@ -102,6 +102,14 @@ function Created()
     GotoState('STA_ResetInputs');
 }
 //------------------------------------------------------------------------------------------------
+function DisplayHelpBar(Canvas C) {
+    myRoot.bIamInMulti = True;
+    Super(XIIIWindowPlus).DisplayHelpBar(C);
+    myRoot.bIamInMulti = False;
+}
+
+
+//------------------------------------------------------------------------------------------------
 function BeforePaint(Canvas C, float X, float Y)
 {
 
@@ -119,7 +127,7 @@ function Paint(Canvas C, float X, float Y)
 
     local int i;
 
-    Super.Paint(C,X,Y);
+    Super(XIIIWindowPlus).Paint(C,X,Y);
 
     /*if ( GetPlayerOwner().Level.Game==none || GetPlayerOwner().Level.NetMode != 0 || GetPlayerOwner().Level.Game.NumPlayers == 1 )
         C.DrawMsgboxBackground(false, BackgroundPosX*fRatioX, BackgroundPosY*fScaleTo*fRatioY, 10, 10, BackgroundWidth*fRatioX, BackgroundHeight*fScaleTo*fRatioY);
@@ -271,7 +279,7 @@ function bool InternalOnKeyEvent(out byte Key, out byte State, float delta)
 function ShowWindow()
 {
 
-     Super.ShowWindow();
+     Super(XIIIWindowPlus).ShowWindow();
 
      bShowBCK = true;
      bShowSEL = true;
@@ -306,5 +314,6 @@ defaultproperties
      bRequire640x480=False
      bAllowedAsLast=True
      bDisplayBar=True
+     bCenterInGame=False
 }
 
